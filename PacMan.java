@@ -1,4 +1,5 @@
 import greenfoot.*;  // (World, Actor, GreenfootImage, Greenfoot and MouseInfo)
+import greenfoot.World;
 
 /**
  * Write a description of class PacMan here.
@@ -8,26 +9,27 @@ import greenfoot.*;  // (World, Actor, GreenfootImage, Greenfoot and MouseInfo)
  */
 public class PacMan extends Person
 {
+    
     private static final int INITIAL_LIFES = 3;
     private static final int INITIAL_POINTS = 0;
     private static final int ITERATIONS_TO_CHANGE_SPRITE = 15;
-    
+
     private int lifes;
     private int points;
-    
     private int movementInX;
     private int movementInY;
-    
+   
     public PacMan()
     {
         sprites = new GreenfootImage[2];
         sprites[0] = new GreenfootImage("images/pacman-open.png");
         sprites[1] = new GreenfootImage("images/pacman-close.png");
-        
+
         lifes = INITIAL_LIFES;
         points = INITIAL_POINTS;
         direction = CharacterDirection.RIGHT;
     }
+
     /**
      * Act - do whatever the PacMan wants to do. This method is called whenever
      * the 'Act' or 'Run' button gets pressed in the environment.
@@ -36,81 +38,109 @@ public class PacMan extends Person
     {
         if(delaySprite >= ITERATIONS_TO_CHANGE_SPRITE)
         {
-           currentSprite = (++currentSprite) % sprites.length;
-           setImage(sprites[currentSprite]);
+            currentSprite = (++currentSprite) % sprites.length;
+            setImage(sprites[currentSprite]);
 
-           delaySprite = 0;
+            delaySprite = 0;
         }
-        
+
         delaySprite++;
-        
+
         setLocation(getX() + movementInX, getY() + movementInY);
-        
+
         String lastKeyPressed = Greenfoot.getKey();
+        
         if(lastKeyPressed != null)
         {
-          
+            getWorld().showText("Puntuacion: ",300,10);
             getWorld().showText(lastKeyPressed, 100, 10);
             
             movePacman(lastKeyPressed);
         }
-        
+        checkItems();
         checkCollisions();
-        
+        checkPhantom();
+       
     }    
-    
+
     void movePacman(String keyPressed)
     {
         movementInY = 0;
         movementInX = 0;
+
         switch(keyPressed)
         {
             case "up":
-                movementInY = -1;
-                direction = CharacterDirection.UP;
-                turnTowards(getX(), 0);
+            movementInY = -1;
+            
+            direction = CharacterDirection.UP;
+            turnTowards(getX(), 0);
             break;
             case "down":
-                movementInY = 1;
-                direction = CharacterDirection.DOWN;
-                turnTowards(getX(), getWorld().getHeight());
+            movementInY = 1;
+            
+            direction = CharacterDirection.DOWN;
+            turnTowards(getX(), getWorld().getHeight());
             break;
             case "left":
-                direction = CharacterDirection.LEFT;
-                turnTowards(0, getY());
-                movementInX = -1;
+            direction = CharacterDirection.LEFT;
+            turnTowards(0, getY());
+            movementInX = -1;
+            
             break;
             case "right":
-                direction = CharacterDirection.RIGHT;
-                turnTowards(getWorld().getWidth(), getY());
-                movementInX = 1;
+            direction = CharacterDirection.RIGHT;
+            turnTowards(getWorld().getWidth(), getY());
+            movementInX = 1;
+            
             break;
         }
     }
-    
+
     void checkCollisions()
     {
-        Wall wall = null; 
+        Wall wall = null;
+        
         switch(direction)
         {
             case UP:
-                wall = (Wall)getOneObjectAtOffset(0, -20, Wall.class);
+            wall = (Wall)getOneObjectAtOffset(0, -20, Wall.class);
             break;
             case DOWN:
-                wall = (Wall)getOneObjectAtOffset(0, 20, Wall.class);
+            wall = (Wall)getOneObjectAtOffset(0, 20, Wall.class);
             break;
             case RIGHT:
-                wall = (Wall)getOneObjectAtOffset(20, 0, Wall.class);
+            wall = (Wall)getOneObjectAtOffset(20, 0, Wall.class);
             break;
             case LEFT:
-                wall = (Wall)getOneObjectAtOffset(-20, 0, Wall.class);
+            wall = (Wall)getOneObjectAtOffset(-20, 0, Wall.class);
             break;
         }
-        
+
         if(wall != null)
         {
             movementInY = 0;
             movementInX = 0;
         }
     }
+
+    void checkItems(){
+
+        getWorld().showText(String.valueOf(points),390,10);
+        if(isTouching(SmallPoint.class)){
+            removeTouching(SmallPoint.class);
+            points+= 10;
+        } else if(isTouching(PowerPoint.class)){
+            removeTouching(PowerPoint.class);
+            points+= 30;
+        }
+    }
+    
+    void checkPhantom(){
+        if(isTouching(Phantom.class)){
+                getWorld().showText("FIN DEL JUEGO",400,400);
+                Greenfoot.stop();
+            }
+    }
 }
+    

@@ -1,3 +1,5 @@
+import greenfoot.*;
+
 /**
  * Write a description of class PacmanGoogleMap here.
  * 
@@ -9,7 +11,7 @@ public class PacmanGoogleMapLoader implements StaticMapLoader
     public Map loadMap()
     {
         Map map = new Map();
-
+        
         addWalls(map);
 
         addSmallItems(map);
@@ -17,7 +19,10 @@ public class PacmanGoogleMapLoader implements StaticMapLoader
         addPowerItems(map);
         
         map.addObject(new PacMan(), 50, 150);
-
+        map.addObject(new BluePhantom(), Greenfoot.getRandomNumber(800),Greenfoot.getRandomNumber(800));
+        map.addObject(new OrangePhantom(),Greenfoot.getRandomNumber(800),Greenfoot.getRandomNumber(800));
+        map.addObject(new PinkPhantom(),Greenfoot.getRandomNumber(800),Greenfoot.getRandomNumber(800));
+        map.addObject(new RedPhantom(),Greenfoot.getRandomNumber(800),Greenfoot.getRandomNumber(800));
         return map;
     }
 
